@@ -7,9 +7,49 @@ Rijndael can be implemented very efficiently on a wide range of processors and i
 
 ||
 |---|
-|The public user interface of the `CRijndael.c` class|
+|The public user interface of the `CRijndael.cpp` class|
 |The `MakeKey()` function is used to expand a user-supplied key material into a session key and to initialize the chain block. The `keylength` and `blockSize` can be any combination of 16, 24 or 32 bytes sizes with `DEFAULT_BLOCK_SIZE` being 16. This function has to be called after construction before any other functions.|
 |The `EncryptBlock()` function is used to encrypt a block of the specified size using the specified key.|
 |The `DecryptBlock()` function is the reverse of the `EncryptBlock()` function and is used to decrypt a block of the specified size using the specified key.|
 |The `Encrypt()` function is used to encrypt larger blocks of data. The block size has to be a multiple of the method's block size. This function can operate in the following modes: `ECB`, `CBC` or `CFB`. `ECB` mode is not using chaining. If the same block is encrypted twice with the same key, the resulting ciphertext blocks are the same. In `CBC` mode, a ciphertext block is obtained by first XORing the plaintext block with the previous ciphertext block, and encrypting the resulting value. In `CFB` mode, a ciphertext block is obtained by encrypting the previous ciphertext block and XORing the resulting value with the plaintext. The operation mode is specified in the iMode parameter with `ECB` being the default value.|
 |The `Decrypt()` function is the reverse of the `Encrypt()` function.|
+||
+
+## Use Examples
+The use of `CRijndael` class is very easy. In the first code snippet example, a block and key size of 16 bytes are applied to a 16 bytes block. The initial chain block is a null block. The block "`aaaaaaaabbbbbbbb`" is encrypted and then decrypted back.
+
+```cpp
+try
+{
+  char szHex[33];
+
+  //Initialization
+  CRijndael oRijndael;
+  oRijndael.MakeKey("abcdefghabcdefgh", CRijndael::sm_chain0, 16, 16);
+
+  char szDataIn[] = "aaaaaaaabbbbbbbb";
+  char szDataOut[17] = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+
+  //Encryption
+  oRijndael.EncryptBlock(szDataIn, szDataOut);
+
+  CharStr2HexStr((unsigned char*)szDataIn, szHex, 16);
+  cout << szHex << endl;
+  CharStr2HexStr((unsigned char*)szDataOut, szHex, 16);
+  cout << szHex << endl;
+  memset(szDataIn, 0, 16);
+
+  //Decryption
+  oRijndael.DecryptBlock(szDataOut, szDataIn);
+
+  CharStr2HexStr((unsigned char*)szDataIn, szHex, 16);
+  cout << szHex << endl;
+}
+catch(exception& roException)
+{
+  cout << roException.what() << endl;
+}
+```
+
+In the next code snippet example, a block and key size of 16 bytes are applied to a larger block of data of size 48 bytes (the block of data size should be a multiple of the block size). The initial chain block is a null block. The block "`ababababccccccccababababccccccccababababcccccccc`" is encrypted and then decrypted back in all the operation modes (`ECB`, `CBC` and `CFB`).
+
