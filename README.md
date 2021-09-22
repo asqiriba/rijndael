@@ -97,5 +97,5 @@ catch(exception& roException)
 ```
 
 ## License
-This article, along with any associated source code and files, is licensed under **The Microsoft Public License (Ms-PL)**.
+This, along with any associated source code and files, is licensed under **The Microsoft Public License (Ms-PL)**.
 #### <div style="text-align: right"> Credits: George Anescu </div>
