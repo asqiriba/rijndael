@@ -1,2 +1,15 @@
-# Rijndael
-Rijndael block cypher in C.
+# A C++ Implementation of the Rijndael Encryption/Decryption
+Rijndael (pronounced *rain-dahl*) is the block cipher algorithm that has been selected by the U.S. National Institute of Standards and Technology (NIST) as the candidate for the Advanced Encryption Standard (AES). It was selected by contest from a list of five finalists, that were themselves selected from an original list of more than 15 submissions. Rijndael will begin to supplant the Data Encryption Standard (DES) - and later Triple DES - over the next few years in many cryptography applications. The algorithm was designed by two Belgian cryptologists, Vincent Rijmen and Joan Daemen, whose surnames are reflected in the cipher's name. Rijndael has its origins in Square, an earlier collaboration between the two cryptologists.
+
+The cipher has a variable block length and key length. The authors currently specify how to use keys with a length of 128, 192 or 256 bits, to encrypt blocks with a length of 128, 192 or 256 bits (all nine combinations of key length and block length are possible). Both block length and key length can be extended very easily to multiples of 32 bits. Documentation and complete specification of the method (as required by NIST) can be found here.
+
+Rijndael can be implemented very efficiently on a wide range of processors and in hardware. This C++ implementation presented here is based on the Java implementation used with the Cryptix toolkit found on the Internet here (Java code authors are Raif S. Naffah and Paulo S.L.M. Barreto). This implementation was tested against KAT test published by the authors of the method and the results were identical.
+
+||
+|---|
+|The public user interface of the `CRijndael.c` class|
+|The `MakeKey()` function is used to expand a user-supplied key material into a session key and to initialize the chain block. The `keylength` and `blockSize` can be any combination of 16, 24 or 32 bytes sizes with `DEFAULT_BLOCK_SIZE` being 16. This function has to be called after construction before any other functions.|
+|The `EncryptBlock()` function is used to encrypt a block of the specified size using the specified key.|
+|The `DecryptBlock()` function is the reverse of the `EncryptBlock()` function and is used to decrypt a block of the specified size using the specified key.|
+|The `Encrypt()` function is used to encrypt larger blocks of data. The block size has to be a multiple of the method's block size. This function can operate in the following modes: `ECB`, `CBC` or `CFB`. `ECB` mode is not using chaining. If the same block is encrypted twice with the same key, the resulting ciphertext blocks are the same. In `CBC` mode, a ciphertext block is obtained by first XORing the plaintext block with the previous ciphertext block, and encrypting the resulting value. In `CFB` mode, a ciphertext block is obtained by encrypting the previous ciphertext block and XORing the resulting value with the plaintext. The operation mode is specified in the iMode parameter with `ECB` being the default value.|
+|The `Decrypt()` function is the reverse of the `Encrypt()` function.|
