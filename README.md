@@ -1,4 +1,5 @@
 # A C++ Implementation of the Rijndael Encryption/Decryption
+
 Rijndael (pronounced *rain-dahl*) is the block cipher algorithm that has been selected by the U.S. National Institute of Standards and Technology (NIST) as the candidate for the Advanced Encryption Standard (AES). It was selected by contest from a list of five finalists, that were themselves selected from an original list of more than 15 submissions. Rijndael will begin to supplant the Data Encryption Standard (DES) - and later Triple DES - over the next few years in many cryptography applications. The algorithm was designed by two Belgian cryptologists, Vincent Rijmen and Joan Daemen, whose surnames are reflected in the cipher's name. Rijndael has its origins in Square, an earlier collaboration between the two cryptologists.
 
 The cipher has a variable block length and key length. The authors currently specify how to use keys with a length of 128, 192 or 256 bits, to encrypt blocks with a length of 128, 192 or 256 bits (all nine combinations of key length and block length are possible). Both block length and key length can be extended very easily to multiples of 32 bits. Documentation and complete specification of the method (as required by NIST) can be found here.
@@ -53,3 +54,48 @@ catch(exception& roException)
 
 In the next code snippet example, a block and key size of 16 bytes are applied to a larger block of data of size 48 bytes (the block of data size should be a multiple of the block size). The initial chain block is a null block. The block "`ababababccccccccababababccccccccababababcccccccc`" is encrypted and then decrypted back in all the operation modes (`ECB`, `CBC` and `CFB`).
 
+```cpp
+try
+{
+  CRijndael oRijndael;
+  oRijndael.MakeKey("1234567890123456", CRijndael::sm_chain0, 16, 16);
+  char szDataIn1[49] = "ababababccccccccababababccccccccababababcccccccc";
+  char szDataIn[49];
+  char szDataOut[49];
+  memset(szDataIn, 0, 49);
+  memset(szDataOut, 0, 49);
+
+  //Test ECB
+  strcpy(szDataIn, szDataIn1);
+  memset(szDataOut, 0, 49);
+  oRijndael.Encrypt(szDataIn, szDataOut, 48, CRijndael::ECB);
+  memset(szDataIn, 0, 49);
+  oRijndael.Decrypt(szDataOut, szDataIn, 48, CRijndael::ECB);
+
+  //Test CBC
+  oRijndael.ResetChain();
+  strcpy(szDataIn, szDataIn1);
+  memset(szDataOut, 0, 49);
+  oRijndael.Encrypt(szDataIn, szDataOut, 48, CRijndael::CBC);
+  memset(szDataIn, 0, 49);
+  oRijndael.ResetChain();
+  oRijndael.Decrypt(szDataOut, szDataIn, 48, CRijndael::CBC);
+
+  //Test CFB
+  oRijndael.ResetChain();
+  strcpy(szDataIn, szDataIn1);
+  memset(szDataOut, 0, 49);
+  oRijndael.Encrypt(szDataIn, szDataOut, 48, CRijndael::CFB);
+  memset(szDataIn, 0, 49);
+  oRijndael.ResetChain();
+  oRijndael.Decrypt(szDataOut, szDataIn, 48, CRijndael::CFB);
+}
+catch(exception& roException)
+{
+  cout << "Exception: " << roException.what() << endl;
+}
+```
+
+## License
+This article, along with any associated source code and files, is licensed under **The Microsoft Public License (Ms-PL)**.
+#### <div style="text-align: right"> Credits: George Anescu </div>
